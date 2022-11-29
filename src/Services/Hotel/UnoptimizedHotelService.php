@@ -3,6 +3,7 @@
 namespace App\Services\Hotel;
 
 use App\Common\FilterException;
+use App\Common\PDOSingleton;
 use App\Common\SingletonTrait;
 use App\Common\Timers;
 use App\Entities\HotelEntity;
@@ -31,7 +32,12 @@ class UnoptimizedHotelService extends AbstractHotelService {
    * @noinspection PhpUnnecessaryLocalVariableInspection
    */
   protected function getDB () : PDO {
-    $pdo = new PDO( "mysql:host=db;dbname=tp;charset=utf8mb4", "root", "root" );
+      $timer = Timers::getInstance();
+      $timerId = $timer->startTimer('DB');
+
+      $pdo = PDOSingleton::get();
+
+      $timer->endTimer('DB', $timerId);
     return $pdo;
   }
   
@@ -239,6 +245,7 @@ class UnoptimizedHotelService extends AbstractHotelService {
       $timerId = $timer->startTimer('HotelMeta');
       $this->getMetas( $hotel );
       $timer->endTimer('HotelMeta', $timerId);
+
     
     // Charge les données meta de l'hôtel
     $metasData = $this->getMetas( $hotel );

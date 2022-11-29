@@ -52,12 +52,12 @@ class UnoptimizedHotelService extends AbstractHotelService {
    */
   protected function getMeta ( int $userId, string $key ) : ?string {
     $db = $this->getDB();
-    $stmt = $db->prepare( "SELECT * FROM wp_usermeta WHERE user_id = :userId AND meta_key = :key" );
+    $stmt = $db->prepare( "SELECT meta_value FROM wp_usermeta WHERE user_id = :userId AND meta_key = :key" );
     $stmt->execute( [ 'userId' => $userId, 'key' => $key ] );
     
-    $result = $stmt->fetchAll( PDO::FETCH_ASSOC );
+    $result = $stmt->fetch( PDO::FETCH_ASSOC );
 
-    return $result[0]['meta_value'] ?? null;
+    return $result['meta_value'] ?? null;
   }
   
   
@@ -98,18 +98,13 @@ class UnoptimizedHotelService extends AbstractHotelService {
    */
   protected function getReviews ( HotelEntity $hotel ) : array {
     // Récupère tous les avis d'un hotel
-    $stmt = $this->getDB()->prepare( "SELECT * FROM wp_posts, wp_postmeta WHERE wp_posts.post_author = :hotelId AND wp_posts.ID = wp_postmeta.post_id AND meta_key = 'rating' AND post_type = 'review'" );
+    $stmt = $this->getDB()->prepare( "SELECT AVG(meta_value) as moyenne, COUNT(meta_value) as cpt FROM wp_posts, wp_postmeta WHERE wp_posts.post_author = :hotelId AND wp_posts.ID = wp_postmeta.post_id AND meta_key = 'rating' AND post_type = 'review'");
     $stmt->execute( [ 'hotelId' => $hotel->getId() ] );
     $reviews = $stmt->fetchAll( PDO::FETCH_ASSOC );
     
-    // Sur les lignes, ne garde que la note de l'avis
-    $reviews = array_map( function ( $review ) {
-      return intval( $review['meta_value'] );
-    }, $reviews );
-    
     $output = [
-      'rating' => round( array_sum( $reviews ) / count( $reviews ) ),
-      'count' => count( $reviews ),
+      'rating' => (int) $reviews[0]['moyenne'],
+      'count' => (int) $reviews[0]['cpt'],
     ];
     
     return $output;

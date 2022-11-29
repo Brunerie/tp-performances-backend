@@ -32,7 +32,7 @@ Vous pouvez utiliser ce [GSheets](https://docs.google.com/spreadsheets/d/13Hw27U
 - **Après** TEMPS
 
 
-#### Amélioration de la méthode `getMeta` et donc de la méthode `getMetas` :
+#### Amélioration de la méthode `getMeta()` et donc de la méthode `getMetas()` :
 
 - **Avant** 3.69 s
 
@@ -43,12 +43,12 @@ SELECT * FROM wp_usermeta
 - **Après** 1.55 s
 
 ```sql
-SELECT * FROM wp_usermeta WHERE user_id = :userId AND meta_key = :key
+SELECT meta_value FROM wp_usermeta WHERE user_id = :userId AND meta_key = :key
 ```
 
 
 
-#### Amélioration de la méthode `getReviews` :
+#### Amélioration de la méthode `getReviews()` :
 
 - **Avant** 9.11 s
 
@@ -56,10 +56,10 @@ SELECT * FROM wp_usermeta WHERE user_id = :userId AND meta_key = :key
 SELECT * FROM wp_posts, wp_postmeta WHERE wp_posts.post_author = :hotelId AND wp_posts.ID = wp_postmeta.post_id AND meta_key = 'rating' AND post_type = 'review'
 ```
 
-- **Après** TEMPS
+- **Après** 7.32 s
 
 ```sql
--- NOUVELLE REQ SQL
+SELECT AVG(meta_value) as moyenne, COUNT(meta_value) as cpt FROM wp_posts, wp_postmeta WHERE wp_posts.post_author = :hotelId AND wp_posts.ID = wp_postmeta.post_id AND meta_key = 'rating' AND post_type = 'review'
 ```
 
 

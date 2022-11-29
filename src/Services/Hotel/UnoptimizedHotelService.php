@@ -4,6 +4,7 @@ namespace App\Services\Hotel;
 
 use App\Common\FilterException;
 use App\Common\SingletonTrait;
+use App\Common\Timers;
 use App\Entities\HotelEntity;
 use App\Entities\RoomEntity;
 use App\Services\Room\RoomService;
@@ -223,6 +224,21 @@ class UnoptimizedHotelService extends AbstractHotelService {
     $hotel = ( new HotelEntity() )
       ->setId( $data['ID'] )
       ->setName( $data['display_name'] );
+
+      $timer = Timers::getInstance();
+      $timerId = $timer->startTimer('CheapestRoom');
+      $this->getCheapestRoom( $hotel );
+      $timer->endTimer('CheapestRoom', $timerId);
+
+      $timer = Timers::getInstance();
+      $timerId = $timer->startTimer('Reviews');
+      $this->getReviews( $hotel );
+      $timer->endTimer('Reviews', $timerId);
+
+      $timer = Timers::getInstance();
+      $timerId = $timer->startTimer('HotelMeta');
+      $this->getMetas( $hotel );
+      $timer->endTimer('HotelMeta', $timerId);
     
     // Charge les données meta de l'hôtel
     $metasData = $this->getMetas( $hotel );

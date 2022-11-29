@@ -27,33 +27,33 @@ Vous pouvez utiliser ce [GSheets](https://docs.google.com/spreadsheets/d/13Hw27U
 
 **Temps de chargement globaux**
 
-- **Avant** TEMPS
+- **Avant** 61.4 s
 
 - **Après** TEMPS
 
 
-#### Amélioration de la méthode `METHOD` et donc de la méthode `METHOD` :
+#### Amélioration de la méthode `getMeta` et donc de la méthode `getMetas` :
 
-- **Avant** TEMPS
+- **Avant** 3.69 s
 
 ```sql
--- REQ SQL DE BASE
+SELECT * FROM wp_usermeta
 ```
 
-- **Après** TEMPS
+- **Après** 1.55 s
 
 ```sql
--- NOUVELLE REQ SQL
+SELECT * FROM wp_usermeta WHERE user_id = :userId AND meta_key = :key
 ```
 
 
 
-#### Amélioration de la méthode `METHOD` :
+#### Amélioration de la méthode `getReviews` :
 
-- **Avant** TEMPS
+- **Avant** 9.11 s
 
 ```sql
--- REQ SQL DE BASE
+SELECT * FROM wp_posts, wp_postmeta WHERE wp_posts.post_author = :hotelId AND wp_posts.ID = wp_postmeta.post_id AND meta_key = 'rating' AND post_type = 'review'
 ```
 
 - **Après** TEMPS

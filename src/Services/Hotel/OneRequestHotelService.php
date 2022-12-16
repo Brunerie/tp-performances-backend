@@ -9,7 +9,7 @@ use App\Entities\RoomEntity;
 use App\Services\Room\RoomService;
 use PDO;
 
-class OptimizedHotelService extends AbstractHotelService {
+class OneRequestHotelService extends AbstractHotelService {
 
     use SingletonTrait;
 
